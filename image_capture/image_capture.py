@@ -55,12 +55,12 @@ while cap.isOpened():
             if not os.path.exists('frames'):
                 os.makedirs('frames') # Create ./frames if it does not exist
             cv2.imwrite('frames/frame%d.jpg' % frame_count, frame) # Save frame as JPEG file
-            print('Read a new frame:', frame_count)
+            print('Saved frame:', frame_count)
             frame_count += 1
         start_time = time.time() # Reset time
 
     # Wait for a key event
-    if cv2.waitKey(30) & 0xFF == ord('q'):
+    if cv2.waitKey(1) & 0xFF == ord('q'):
         break
 
 # When everything done, release the capture
