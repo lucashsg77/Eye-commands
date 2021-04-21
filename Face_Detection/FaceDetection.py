@@ -4,7 +4,7 @@ import dlib
 class FaceDetector:
     # dlib detectors
     FACE = dlib.get_frontal_face_detector()
-    LANDMARKS = dlib.shape_predictor("./shape_predictor_68_face_landmarks.dat")
+    LANDMARKS = dlib.shape_predictor("Face_Detection\\shape_predictor_68_face_landmarks.dat")
 
     def __init__(self):
         pass
