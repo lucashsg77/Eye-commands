@@ -1,10 +1,15 @@
 import dlib
+import os
 
 
 class FaceDetector:
+    CWD = os.path.abspath(os.path.dirname(__file__))
+    MODEL_PATH = CWD.replace(
+        os.path.dirname(__file__), "models/shape_predictor_68_face_landmarks.dat"
+    )
     # dlib detectors
     FACE = dlib.get_frontal_face_detector()
-    LANDMARKS = dlib.shape_predictor("Face_Detection\\shape_predictor_68_face_landmarks.dat")
+    LANDMARKS = dlib.shape_predictor(MODEL_PATH)
 
     def __init__(self):
         pass
