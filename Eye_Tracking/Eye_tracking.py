@@ -32,8 +32,8 @@ def eyeCenterTracking(eye, drawFigures = False):
         # the returned points we can find the center coordinates of any given contour    
         M = cv2.moments(cnt)
         center = (int(M["m10"] / M["m00"]), int(M["m01"] / M["m00"]))
-
+        area = cv2.contourArea(cnt)
         if (drawFigures):
             drawTrackingFigures(eye, cnt, rows, cols, center)
         break
-    return center, eye
+    return area, center, eye
