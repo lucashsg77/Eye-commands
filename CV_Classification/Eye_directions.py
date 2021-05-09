@@ -2,12 +2,11 @@
 # After a calibration module is done this module will need to be upgraded and is likely to work consistently if we have a margin of a certain amount of pixels, to be more 
 # precise.
 # The classification works by getting the gaze average coordinates as well as the contour area after 5 frames, after that we take the absolute value of the difference from
-# the center average position and the current gaze average position, then we compare those differences to know if the movement is bigger in the x axis or y axis
-# and at the end by comparing the values in relation to the average center position we can decide where the person is looking at
-# The calibration system works in a frame limit base, meaning that after 80 frames past the countdown it will take the coordinates and contour area average of the person when looking
-# at the center and store it in an array to later be used.
-# TODO: this module can be improved without the calibration module still, by using the area info that I haven't tried to use yet, it might be helpul to use it to detect y axis movements
-# more accurately, as well as setting the conditions of the frame_count in the functions to input parameters instead of being hard coded like I did.
+# the center average position and the current gaze average position, then we compare those differences to know if the movement is bigger in the x axis or y axis, as well as
+# consider the differences of the countour areas to see if the movement was valid or not, at the end by comparing the values in relation to the average center position we 
+# can find where the person is looking at. The calibration system works in a frame limit base, meaning that after 80 frames past the countdown it will take the coordinates 
+# and contour area average of the person when looking at the center and store it in an array to later be used in tthe steps explained above.
+# TODO: this module can be improved without the calibration module still, setting the conditions of the frame_count in the functions to input parameters instead of being hard coded like I did.
 
 class Classifier():
 

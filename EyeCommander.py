@@ -58,6 +58,7 @@ class EyeCommander(object):
         )
         return None
 
+	# Made a simple calibration countdown, it works assuming 1 sec equals 20 frames, as well as added the classifier for the left eye but it works the same with the right eye
     def make_classification(self):
         if self.frame_count <= 100:
             if 0 <= self.frame_count <= 40:
@@ -70,10 +71,12 @@ class EyeCommander(object):
                 cv2.putText(self.frame, "3", (50, 100), self.font, 2, (0, 0, 255), 3)
         elif self.frame_count <= 180:
             cv2.putText(self.frame, "Keep Looking!", (50, 100), self.font, 2, (0, 0, 255), 3)
+            # calls the calibration function
             self.leftEyeClassifier.findCenterAverage(self.frame_count, self.eye_left_center, self.eye_left_cnt)
         else:
             if self.frame_count <= 200:
                cv2.putText(self.frame, "Done!", (50, 100), self.font, 2, (0, 0, 255), 3)
+            # calls the classify function
             self.leftEyeClassifier.classify(self.frame_count, self.eye_left_center, self.eye_left_cnt)
         return self.leftEyeClassifier.direction
 
