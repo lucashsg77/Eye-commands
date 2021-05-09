@@ -61,7 +61,7 @@ class Classifier():
 					self.direction = 'center'
 			elif xDiff < yDiff:
 				if cntDiff >= 100:
-					if self.gazeAverage[1] < self.centerAverage[1]:
+					if self.gazeAverage[1] < self.centerAverage[1] and yDiff > 3:
 						self.direction = 'up'
 					else:
 						self.direction = 'down'

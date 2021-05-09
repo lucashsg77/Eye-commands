@@ -92,6 +92,7 @@ class EyeCommander(object):
                 try:
                     self.track_eyes(processed_frame)
                     result = self.make_classification()
+                    print(result)
                 except:
                     pass
                 cv2.imshow("frame", self.frame)
