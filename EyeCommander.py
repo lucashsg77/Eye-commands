@@ -1,6 +1,7 @@
 import cv2
 import numpy as np
 import dlib
+from math import hypot
 from Face_Detection.FaceDetection import FaceDetector
 from Frame_Pre_Processing.FramePreProcessing import preProcess
 from ROI_Isolation.ROI_Isolation import Isolate_ROI
@@ -58,8 +59,20 @@ class EyeCommander(object):
         )
         return None
 
+    def midpoint(self, p1, p2):
+        return int((p1.x + p2.x)/2), int((p1.y + p2.y)/2)
+
+    def EyeAspectRatio(self, eye_points):
+        left_point = (self.face_detector.landmarks.part(eye_points[0]).x, self.face_detector.landmarks.part(eye_points[0]).y)
+        right_point = (self.face_detector.landmarks.part(eye_points[3]).x, self.face_detector.landmarks.part(eye_points[3]).y)
+        center_top = self.midpoint(self.face_detector.landmarks.part(eye_points[1]), self.face_detector.landmarks.part(eye_points[2]))
+        center_bottom = self.midpoint(self.face_detector.landmarks.part(eye_points[5]), self.face_detector.landmarks.part(eye_points[4]))
+        hor_line_lenght = hypot((left_point[0] - right_point[0]), (left_point[1] - right_point[1]))
+        ver_line_lenght = hypot((center_top[0] - center_bottom[0]), (center_top[1] - center_bottom[1]))
+        return hor_line_lenght / ver_line_lenght
+
 	# Made a simple calibration countdown, it works assuming 1 sec equals 20 frames, as well as added the classifier for the left eye but it works the same with the right eye
-    def make_classification(self):
+    def make_classification(self, ratio):
         if self.frame_count <= 100:
             if 0 <= self.frame_count <= 40:
                 cv2.putText(self.frame, "Look at the center area of your monitor after the count to 3", (50, 100), self.font, 2, (0, 0, 255), 3)
@@ -72,13 +85,15 @@ class EyeCommander(object):
         elif self.frame_count <= 180:
             cv2.putText(self.frame, "Keep Looking!", (50, 100), self.font, 2, (0, 0, 255), 3)
             # calls the calibration function
-            self.leftEyeClassifier.findCenterAverage(self.frame_count, self.eye_left_center, self.eye_left_cnt)
+            self.leftEyeClassifier.findCenterAverage(self.frame_count, self.eye_left_center, self.eye_left_cnt, ratio)
+            self.rightEyeClassifier.findCenterAverage(self.frame_count, self.eye_right_center, self.eye_right_cnt, ratio)
         else:
             if self.frame_count <= 200:
                cv2.putText(self.frame, "Done!", (50, 100), self.font, 2, (0, 0, 255), 3)
             # calls the classify function
-            self.leftEyeClassifier.classify(self.frame_count, self.eye_left_center, self.eye_left_cnt)
-        return self.leftEyeClassifier.direction
+            self.leftEyeClassifier.classify(self.frame_count, self.eye_left_center, self.eye_left_cnt, ratio)
+            self.rightEyeClassifier.classify(self.frame_count, self.eye_right_center, self.eye_right_cnt, ratio)
+        return self.leftEyeClassifier.direction, self.rightEyeClassifier.direction
 
     def run_demo(self):
         while self.camera.isOpened():
@@ -94,7 +109,8 @@ class EyeCommander(object):
             if faceDetected == True:
                 try:
                     self.track_eyes(processed_frame)
-                    result = self.make_classification()
+                    ratio = self.EyeAspectRatio([36, 37, 38, 39, 40, 41])
+                    result = self.make_classification(ratio)
                     print(result)
                 except:
                     pass
