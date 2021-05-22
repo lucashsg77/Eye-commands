@@ -13,11 +13,12 @@ class FaceDetector(object):
         self.eye_right = None
         self.eye_left = None
         self.face_box = None
+        self.landmarks = None
 
     # method for detecting faces and returning coordinates
     def detect(self, frame):
         _results = self._face_detector(frame)
-        faceDetected = len(_results) == 1
+        faceDetected = len(_results) != 0
         # if there is only one face present
         if faceDetected:
             # box is the dlib rectangle object for each face
@@ -26,6 +27,7 @@ class FaceDetector(object):
             self.face_box = [box.top(), box.bottom(), box.left(), box.right()]
             # dlib landmarks object
             landmarks = self._landmark_detector(image=frame, box=box)
+            self.landmarks = landmarks 
             self.eye_left = [
                 (landmarks.part(i).x, landmarks.part(i).y) for i in range(36, 42)
             ]
