@@ -2,9 +2,9 @@ from Face_Detection.FaceDetection import FaceDetector
 import cv2
 import os
 import glob
-from commander import Commander
+from DLCommander import DLCommander
 
-commander = Commander(image_size=100)
+commander = DLCommander(image_size=100)
 for name in ['up','down','left','right','center']:
 
     files = glob.glob(f'./data/imgs/{name}/*.jpg') 

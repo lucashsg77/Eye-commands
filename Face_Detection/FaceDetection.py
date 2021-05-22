@@ -28,11 +28,12 @@ class FaceDetector(object):
             # dlib landmarks object
             landmarks = self._landmark_detector(image=frame, box=box)
             self.landmarks = landmarks 
+
             self.eye_left = [
-                (landmarks.part(i).x, landmarks.part(i).y) for i in range(36, 42)
+                (self.landmarks.part(i).x, self.landmarks.part(i).y) for i in range(36, 42)
             ]
             self.eye_right = [
-                (landmarks.part(i).x, landmarks.part(i).y) for i in range(42, 48)
+                (self.landmarks.part(i).x, self.landmarks.part(i).y) for i in range(42, 48)
             ]
             return True
         else:
