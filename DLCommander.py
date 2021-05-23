@@ -48,7 +48,7 @@ class DLCommander(object):
         classes = ['center', 'down', 'left', 'right', 'up']
         n = 3
         stack = []
-        count = 0
+       
         while self.camera.isOpened():
             
             success, self.frame = self.camera.read()
@@ -69,14 +69,13 @@ class DLCommander(object):
                     stack.pop()
                 else:
                     stack.append(prediction)
-            if count == 3:
-                decision = Counter(stack).most_common(1)[0][0]
-                cv2.putText(self.frame, f"{classes[decision]}", (50, 100), cv2.FONT_HERSHEY_PLAIN, 2, (0, 0, 255), 3)
-                print(classes[decision])
-                count = 0
-            else:
-                count += 1
+            
+            decision = Counter(stack).most_common(1)[0][0]
+            print(classes[decision])
+            
+            cv2.putText(self.frame, f"{classes[decision]}", (50, 100), cv2.FONT_HERSHEY_PLAIN, 5, (255, 0, 0), 3)
             cv2.imshow("frame", self.frame)
+            # cv2.imshow('im',eye_img)
             # Wait for a key event
             if cv2.waitKey(1) & 0xFF == ord("q"):
                 break
