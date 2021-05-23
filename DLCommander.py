@@ -51,7 +51,9 @@ class DLCommander(object):
        
         while self.camera.isOpened():
             
-            success, self.frame = self.camera.read()
+            success, frame = self.camera.read()
+            self.frame = frame
+            flipped = cv2.flip(frame, 1)
             # Stop if no video input
             if not success:
                 break
@@ -71,10 +73,25 @@ class DLCommander(object):
                     stack.append(prediction)
             
             decision = Counter(stack).most_common(1)[0][0]
-            print(classes[decision])
+            label = classes[decision]
+            color = (255, 0, 0)
+            print(label)
+
+            font = cv2.FONT_HERSHEY_PLAIN
+            if label == 'left':
+                cv2.putText(flipped, "left", (50, 375), font , 7, color, 15)
+            elif label == 'right':
+                cv2.putText(flipped, "right", (900, 375), font, 7, color, 15)
+            elif label == 'up':
+                cv2.putText(flipped, "up", (575, 100), font, 7, color, 15)
+            elif label == 'down':
+                cv2.putText(flipped, "down", (500, 700), font, 7, color, 15)
+            else:
+                cv2.putText(flipped, "center", (550, 375), font, 3, color, 15)
             
-            cv2.putText(self.frame, f"{classes[decision]}", (50, 100), cv2.FONT_HERSHEY_PLAIN, 5, (255, 0, 0), 3)
-            cv2.imshow("frame", self.frame)
+            # cv2.putText(flipped, f"{classes[decision]}", (50, 100), cv2.FONT_HERSHEY_PLAIN, 7, (255, 0, 0), 15)
+            
+            cv2.imshow("frame", flipped)
             # cv2.imshow('im',eye_img)
             # Wait for a key event
             if cv2.waitKey(1) & 0xFF == ord("q"):
