@@ -93,7 +93,7 @@ class EyeCommander(object):
             # calls the classify function
             self.leftEyeClassifier.classify(self.frame_count, self.eye_left_center, self.eye_left_cnt, ratio)
             self.rightEyeClassifier.classify(self.frame_count, self.eye_right_center, self.eye_right_cnt, ratio)
-        return self.leftEyeClassifier.direction, self.rightEyeClassifier.direction
+        return self.leftEyeClassifier.direction
 
     def run_demo(self):
         while self.camera.isOpened():
