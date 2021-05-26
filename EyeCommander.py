@@ -7,7 +7,18 @@ from Frame_Pre_Processing.FramePreProcessing import preProcess
 from ROI_Isolation.ROI_Isolation import Isolate_ROI
 from Eye_Tracking.Eye_tracking import eyeCenterTracking
 from CV_Classification.Eye_directions import Classifier
-
+import pyglet
+center_sound = pyglet.media.load("Sound_prompts//center.mp3", streaming=False)
+up_sound =    pyglet.media.load("Sound_prompts//up.mp3", streaming=False)
+down_sound =  pyglet.media.load("Sound_prompts//down.mp3", streaming=False)
+left_sound =  pyglet.media.load("Sound_prompts//left.mp3", streaming=False)
+right_sound = pyglet.media.load("Sound_prompts//right.mp3", streaming=False)
+one_sound = pyglet.media.load("Sound_prompts//1.mp3", streaming=False)
+two_sound = pyglet.media.load("Sound_prompts//2.mp3", streaming=False)
+three_sound = pyglet.media.load("Sound_prompts//3.mp3", streaming=False)
+look_sound = pyglet.media.load("Sound_prompts//look.mp3", streaming=False)
+completed_sound = pyglet.media.load("Sound_prompts//completed.mp3", streaming=False)
+keep_sound = pyglet.media.load("Sound_prompts//keep.mp3", streaming=False)
 class EyeCommander(object):
     def __init__(self, camera=cv2.VideoCapture(0)):
         self.camera = camera
@@ -75,27 +86,40 @@ class EyeCommander(object):
     def make_classification(self, ratio):
         if self.frame_count <= 100:
             if 0 <= self.frame_count <= 40:
-                cv2.putText(self.frame, "Look at the center area of your monitor after the count to 3", (50, 100), self.font, 2, (0, 0, 255), 3)
+                cv2.putText(self.frame, "Look at the camera after the count", (50, 100), self.font, 2, (0, 0, 255), 3)
+                if self.frame_count == 0:
+                    look_sound.play()
             elif self.frame_count <= 60:
                 cv2.putText(self.frame, "1", (50, 100), self.font, 2, (0, 0, 255), 3)
+                if self.frame_count == 41:
+                    one_sound.play()
             elif self.frame_count <= 80:
                 cv2.putText(self.frame, "2", (50, 100), self.font, 2, (0, 0, 255), 3)
+                if self.frame_count == 61:
+                    two_sound.play()
             elif self.frame_count <= 100:
                 cv2.putText(self.frame, "3", (50, 100), self.font, 2, (0, 0, 255), 3)
+                if self.frame_count == 81:
+                    three_sound.play()
         elif self.frame_count <= 180:
             cv2.putText(self.frame, "Keep Looking!", (50, 100), self.font, 2, (0, 0, 255), 3)
+            if self.frame_count == 101:
+                 keep_sound.play()
             # calls the calibration function
             self.leftEyeClassifier.findCenterAverage(self.frame_count, self.eye_left_center, self.eye_left_cnt, ratio)
             self.rightEyeClassifier.findCenterAverage(self.frame_count, self.eye_right_center, self.eye_right_cnt, ratio)
         else:
             if self.frame_count <= 200:
-               cv2.putText(self.frame, "Done!", (50, 100), self.font, 2, (0, 0, 255), 3)
+               cv2.putText(self.frame, "Calibration completed!", (50, 100), self.font, 2, (0, 0, 255), 3)
+               if self.frame_count == 181:
+                    completed_sound.play()
             # calls the classify function
             self.leftEyeClassifier.classify(self.frame_count, self.eye_left_center, self.eye_left_cnt, ratio)
             self.rightEyeClassifier.classify(self.frame_count, self.eye_right_center, self.eye_right_cnt, ratio)
         return self.leftEyeClassifier.direction
 
     def run_demo(self):
+        flag = ''
         while self.camera.isOpened():
             success, self.frame = self.camera.read()
             # Stop if no video input
@@ -109,9 +133,23 @@ class EyeCommander(object):
             if faceDetected == True:
                 try:
                     self.track_eyes(processed_frame)
-                    ratio = self.EyeAspectRatio([36, 37, 38, 39, 40, 41])
+                    ratio = self.EyeAspectRatio([36, 37, 38, 39, 40, 41, 42])
                     result = self.make_classification(ratio)
-                    print(result)
+                    if self.frame_count > 220:
+                       cv2.putText(self.frame, result, (50, 100), self.font, 2, (0, 0, 255), 3)
+                       if flag != result:
+                            if result == "up":
+                             up_sound.play()
+                            elif result == "down":
+                             down_sound.play()
+                            elif result == "left":
+                             left_sound.play()
+                            elif result == "right":
+                             right_sound.play()
+                            elif result == "center":
+                             center_sound.play()
+                            flag = result
+
                 except:
                     pass
                 cv2.imshow("frame", self.frame)
