@@ -43,14 +43,14 @@ class Classifier():
 			self.resetAccumulators()
 
 	def findGazeAverage(self):
-		self.gazeAverage[0] = int(self.eyeCenterXAccumulator / 5)
-		self.gazeAverage[1] = int(self.eyeCenterYAccumulator / 5)
-		self.gazeAverage[2] = int(self.eyeCntAreaAccumulator / 5)
-		self.gazeAverage[3] = self.ratioAccumulator / 5
+		self.gazeAverage[0] = int(self.eyeCenterXAccumulator / 8)
+		self.gazeAverage[1] = int(self.eyeCenterYAccumulator / 8)
+		self.gazeAverage[2] = int(self.eyeCntAreaAccumulator / 8)
+		self.gazeAverage[3] = self.ratioAccumulator / 8
 		self.resetAccumulators()
 
 	def classify(self, frame_count, eye_center, eye_cnt, ratio):
-		if frame_count > 180 and frame_count % 5 == 0: 
+		if frame_count > 180 and frame_count % 8 == 0: 
 			self.findGazeAverage()
 			xDiff =  abs(self.gazeAverage[0] - self.centerAverage[0])
 			yDiff =  abs(self.gazeAverage[1] - self.centerAverage[1])
