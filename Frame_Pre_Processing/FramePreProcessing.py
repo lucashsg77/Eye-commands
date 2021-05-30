@@ -36,19 +36,18 @@ def blur(EqFrame, kernelSize = 7, blurType = 0):
 # Just flips the image horizontaly and converts to Grayscale
 def initialAdjustments(frame):
 	grayFrame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-	hFlipGrayFrame = cv2.flip(grayFrame, 1)
-	return hFlipGrayFrame
+	return grayFrame
 
 # When we normalize the image we are "stretching" the histogram and correcting some of the bad light in it,
 # then we use a histogram euqalization in the entire image, after that we procced to a tile based contrast
 # histogram equalization, that is a histogram equalization of a W x H of a given number of pixels with that
 # our bad light conditions as well as the contrast are better and the grayscale image has more details in it
-def correctLighting(hFlipGrayFrame, clipLimit, tileGridSize):
-	if len(hFlipGrayFrame.shape) > 2:
-		hFlipGrayFrame = initialAdjustments(hFlipGrayFrame)
-	h, w = hFlipGrayFrame.shape
+def correctLighting(grayFrame, clipLimit, tileGridSize):
+	if len(grayFrame.shape) > 2:
+		grayFrame = initialAdjustments(grayFrame)
+	h, w = grayFrame.shape
 	norm = np.zeros((w, h))
-	normalizedFrame = cv2.normalize(hFlipGrayFrame, norm, 0, 255, cv2.NORM_MINMAX)
+	normalizedFrame = cv2.normalize(grayFrame, norm, 0, 255, cv2.NORM_MINMAX)
 	EqFrame = cv2.equalizeHist(normalizedFrame)
 	CLAHEFrame = CLAHE(EqFrame, clipLimit, tileGridSize)
 	return CLAHEFrame
