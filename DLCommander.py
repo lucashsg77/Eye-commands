@@ -1,4 +1,4 @@
-from Face_Detection.FaceDetection import FaceDetector 
+from Face_Detection.FaceDetection import FaceDetector, rect_to_bb, shape_to_np
 from collections import Counter
 import numpy as np
 import cv2
@@ -50,7 +50,6 @@ class DLCommander(object):
         stack = []
        
         while self.camera.isOpened():
-            
             success, frame = self.camera.read()
             self.frame = frame
             flipped = cv2.flip(frame, 1)
@@ -74,8 +73,7 @@ class DLCommander(object):
             
             decision = Counter(stack).most_common(1)[0][0]
             label = classes[decision]
-            color = (255, 0, 0)
-            print(label)
+            color = (252, 198, 3)
 
             font = cv2.FONT_HERSHEY_PLAIN
             if label == 'left':
@@ -87,20 +85,17 @@ class DLCommander(object):
             elif label == 'down':
                 cv2.putText(flipped, "down", (500, 700), font, 7, color, 15)
             else:
-                cv2.putText(flipped, "center", (550, 375), font, 3, color, 15)
-            
-            # cv2.putText(flipped, f"{classes[decision]}", (50, 100), cv2.FONT_HERSHEY_PLAIN, 7, (255, 0, 0), 15)
-            
+                # cv2.putText(flipped, " + ", (550, 375), font, 3, color, 15)
+                pass
+
             cv2.imshow("frame", flipped)
-            # cv2.imshow('im',eye_img)
-            # Wait for a key event
+        
             if cv2.waitKey(1) & 0xFF == ord("q"):
                 break
 
         # When everything done, release the capture
         self.camera.release()
         cv2.destroyAllWindows()
-
 
 if __name__ == "__main__":
     model = tf.keras.models.load_model('./Models/mark3')
